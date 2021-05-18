@@ -1,5 +1,3 @@
 //Compile with g++
 
-g++ `wx-config --cxxflags --libs` main.cpp -o out.exe 
-
-compiling errors are in output.log
+g++ `wx-config --cxxflags --libs` main.cpp -o out.exe
