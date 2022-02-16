@@ -1,3 +1,3 @@
 # cpp-program
 
-This program is the standard hello world application that can be found on wxWidgets.org
+This program is consept point-of-sales application that si build with the wxWidgets Library
