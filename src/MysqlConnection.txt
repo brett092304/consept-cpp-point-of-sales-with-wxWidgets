@@ -1,3 +1,0 @@
-192.168.0.228:3306/products
-StoreAccess
-StoreAccess!
