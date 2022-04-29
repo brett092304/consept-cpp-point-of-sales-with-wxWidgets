@@ -1,8 +1,10 @@
 #include "login.h"
 #include "program.h"
+#include "connection.h"
 
 loginDialog::loginDialog(const wxString &title, bool isManagerLogin) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize)
 {
+    isTempManagerLogin = isManagerLogin;
     enteringUser = true;
     wxSize screenSize = wxGetDisplaySize() * 2/4;
     this->SetSize(screenSize);
@@ -24,11 +26,13 @@ loginDialog::loginDialog(const wxString &title, bool isManagerLogin) : wxDialog(
     loginBtn->SetFont(font);
     wxButton *quitBtn = new wxButton(loginPanel, wxID_ANY, wxT("Quit"));
     quitBtn->SetFont(font);
+    quitBtn->Bind(wxEVT_BUTTON, &loginDialog::OnClose, this);
     if (isManagerLogin)
     {
-        quitBtn->Disable();
+        quitBtn->Unbind(wxEVT_BUTTON, &loginDialog::OnClose, this);
+        quitBtn->SetLabelText("Cancel");
+        quitBtn->Bind(wxEVT_BUTTON, &loginDialog::OnCancel, this);
     }
-
     loginBtn->Bind(wxEVT_BUTTON, &loginDialog::OnLogIn, this);
 
     wxBoxSizer *loginFieldVSizer = new wxBoxSizer(wxVERTICAL);
@@ -99,8 +103,6 @@ loginDialog::loginDialog(const wxString &title, bool isManagerLogin) : wxDialog(
     loginNumPadHSizer->Add(loginNumPadV2Sizer, wxSizerFlags(1).Expand().Border(wxALL, 2));
     loginNumPadSizer->Add(loginNumPadHSizer, wxSizerFlags(1).Expand().Border(wxALL, 2));
 
-    quitBtn->Bind(wxEVT_BUTTON, &loginDialog::OnClose, this);
-
     mainHSizer->Add(loginFieldVSizer, wxSizerFlags(1).Expand().Border(wxALL, 2));
     mainHSizer->Add(loginNumPadSizer, wxSizerFlags(1).Expand().Border(wxALL, 8));
     mainVSizer->Add(mainHSizer, wxSizerFlags(1).Expand().Border(wxALL, 2));
@@ -119,10 +121,44 @@ void loginDialog::OnClose(wxCommandEvent &event)
     event.Skip();
 }
 
+void loginDialog::OnCancel(wxCommandEvent &event)
+{
+    EndModal(wxOK);
+    event.Skip();
+}
+
 void loginDialog::OnLogIn(wxCommandEvent &event)
 {
     if (!loginUserBox->IsEmpty() && !loginPassBox->IsEmpty())
-        EndModal(wxOK);
+    {
+        std::string pass = loginPassBox->GetLineText(0).ToStdString();
+        std::string user = loginUserBox->GetLineText(0).ToStdString();
+        bool *isManager = new bool;
+        std::string *name = new std::string;
+        if (CreateConnection::loginConn(user, pass, name, isManager))
+        {
+            //std::cout << *isManager << std::endl;
+            if (!isTempManagerLogin)
+            {
+                MainFrame::cashirName = *name;
+                MainFrame::cashirNumbers = user;
+                if (*isManager)
+                    MainFrame::isManager = true;
+                else
+                    MainFrame::isManager = false;
+            }
+            else
+            {
+                if (*isManager)
+                    MainFrame::isTempManager = true;
+                else
+                    MainFrame::isTempManager = false;
+            }
+            delete isManager;
+            delete name;
+            EndModal(wxOK);
+        }
+    }
     event.Skip();
 }
 
@@ -135,7 +171,6 @@ std::string loginDialog::hashFunc(std::string password)
     {
         number += password[i] * magicNum;
     }
-    std::cout << number << std::endl;
     ss << std::hex << number;
     return ss.str();
 }
@@ -229,7 +264,6 @@ void loginDialog::enterKeyPad(wxCommandEvent &event)
             else
             {
                 wxString line = loginPassBox->GetLineText(0);
-                std::cout << hashFunc(std::string(line.mb_str())) << std::endl;
                 OnLogIn(event);
             }
             break;

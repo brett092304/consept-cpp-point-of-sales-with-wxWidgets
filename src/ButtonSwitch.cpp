@@ -10,7 +10,8 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
     int key = event.GetId();
     switch(key)
     {
-        case 5001:
+        //static menu with 5000 ids
+        case 5001: //5000-5009 & 5020 - NumPad
             UPCorPLUBox->AppendText("1");
             break;
         case 5002:
@@ -43,39 +44,41 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
         case 5020:
             UPCorPLUBox->AppendText(".");
             break;
-        case 5011:
+        case 5011: //BackSpace
             UPCorPLUBox->Remove(UPCorPLUBox->GetLineLength(0) -1, UPCorPLUBox->GetLineLength(0));
             break;
-        case 5012:
+        case 5012: //Clear Button
+            cancelOperation();
             if (gettingCash)
-            {
-                cancelOperation();
                 gettingCash = false;
-            }
             else if (gettingItem)
-            {
-                cancelOperation();
                 gettingItem = false;
-            }
             else if (scanDeleteItem)
-            {
-                cancelOperation();
                 scanDeleteItem = false;
+            else if (changingQty)
+                changingQty = false;
+            else if (changingPrice)
+                changingPrice = false;
+            else if (hasChange)
+            {
+                deleteTranx(true);
+                hasChange = false;
+                totalTranx();
+                finalTotalLabel->SetLabelText("Total: $");
+                finalTotalHSizer->Layout();
             }
             else
             {
                 UPCorPLUBox->Clear();
+		        UPCorPLUText->SetLabelText("Sku or Upc: ");
             }
             elementsVSizer->Layout();
             break;
-        case 5015:
+        case 5015: //Look Up Item
             LkUpItem();
             OpenMenu = true;
             break;
-        case 9001:
-            getCash();
-            break;
-        case 5010:
+        case 5010: //Enter Button
             if (gettingCash)
             {
                 reciveCash();
@@ -83,64 +86,106 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
             else if (gettingItem)
             {
                 addQty();
+                totalTranx();
             }
             else if (scanDeleteItem)
             {
                 scanDelete();
+                totalTranx();
             }
-            break;
-        case 5021:
-            deleteItem(tablePos);
-            break;
-        case 5024:
-            addItem();
+            else if (changingQty)
+                changeQty();
+            else if (changingPrice)
+                changePrice();
+            else if (settingTaxExempt)
+                taxExempt();
             break;
 
-        //function Menu Here with 7000s ID
-        case 5023:
+        case 5021: //Void Item
+            deleteItem(tablePos);
+            totalTranx();
+            break;
+
+        case 5024: //Sku/Plu Button
+            if (!hasChange)
+                addItem();
+            break;
+
+        case 5019: //Change price Button
+            changingPrice = true;
+            UPCorPLUText->SetLabelText(wxT("Price: $"));
+            break;
+
+        case 5023: //Main Menu Button - go to Main Menu
             functionVSizer->Show(false);
             paymentVSizer->Show(false);
             managerMenuVSizer->Show(false);
             mainMenuVSizer->Show(true);
             elementsVSizer->Layout();
             break;
-        case 5014:
+        case 5014: //SubTotal Button - go to Payment Menu
             mainMenuVSizer->Show(false);
             functionVSizer->Show(false);
             managerMenuVSizer->Show(false);
             paymentVSizer->Show(true);
             elementsVSizer->Layout();
+            totalTranx();
             break;
-        case 5016:
+        case 5016: //Function Menu Button - go to Function Menu
             paymentVSizer->Show(false);
             mainMenuVSizer->Show(false);
             managerMenuVSizer->Show(false);
             functionVSizer->Show(true);
             elementsVSizer->Layout();
             break;
-        case 5017:
+        case 5017: //Manager Menu Button - go to Manager menu
             paymentVSizer->Show(false);
             mainMenuVSizer->Show(false);
             functionVSizer->Show(false);
             managerMenuVSizer->Show(true);
             elementsVSizer->Layout();
             break;
-        case 7099:
-            OnLogout(false);
-            break;
 
-        //Manager Menu owith 8000 ids
-        case 8001:
+        //Manager Menu with 8000 ids
+        case 8001: //Manger Login Button
             OnLogout(true);
             break;
         
-        //Main Menu
-        case 6001:
+        case 8004: //Void Transaction
+            deleteTranx(false);
+            totalTranx();
+            break;
+
+        case 8005: //Copy Row/Line Button
+            duplicateTableLine();
+            break;
+
+        case 8003: //return button - temp
+            break;
+
+        //Function Menu with 7000 ids
+        case 7099: //Logout Button
+            OnLogout(false);
+            break;
+
+        case 7003: //Change Qty Button
+            changingQty = true;
+            UPCorPLUText->SetLabelText(wxT("Quantity: "));
+            break;
+
+        case 7001: //tax exempt
+            settingTaxExempt = true;
+            UPCorPLUText->SetLabelText(wxT("Tax Exempt: "));
+            break;
+
+        //Main Menu with 6000 ids
+        case 6001: //Scanvoid Button
             UPCorPLUText->SetLabelText("Sku or Upc to Void: ");
             elementsVSizer->Layout();
             scanDeleteItem = true;
+            totalTranx();
             break;
-        case 6004:
+        case 6004: //Up List Button
             tablePos --;
             if (tablePos >= 0)
             {
@@ -152,7 +197,7 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
                 tablePos = 0;
             }
             break;
-        case 6005:
+        case 6005: //Down list Button
             tablePos++;
             if (tablePos <= dataTable->GetNumberRows() - 1)
             {
@@ -164,6 +209,12 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
                 tablePos = dataTable->GetNumberRows() - 1;
             }
             break;
+
+        //Payment Menu with 9000 ids
+        case 9001: //Get Cash
+            getCash();
+            break;
+
         default:
             break;
     }

@@ -16,21 +16,25 @@ string sale::formatTotalPrice(int n)
     return formatedCashStr;
 }
 
-void sale::getCashAmount(string amount)
+double sale::getCashAmount(string amount)
 {
     string cashReady;
-    amount.erase(std::remove(amount.begin(), amount.end(), '.'), amount.end());
+    std::cout << amount << std::endl;
+    //amount.erase(std::remove(amount.begin(), amount.end(), '.'), amount.end());
     cashReady = amount;
+    std::cout << cashReady << std::endl;
+    double cashRecived = 0.0;
     try
     {
-         int cashAmountInt = std::stoi(cashReady);
-         std::cout << formatTotalPrice(cashAmountInt) << std::endl;
-         formateToDoubleCash(formatTotalPrice(cashAmountInt));
+        //int cashAmountInt = std::stoi(cashReady);
+        //cashRecived = std::stod(formatTotalPrice(cashAmountInt));
+        cashRecived = std::stod(cashReady);
     }
     catch(const std::exception& e)
     {
         MainFrame::Error("Bad Cash Amount Error");
     }
+    return cashRecived;
 }
 
 void sale::getTotal(std::string totalAmount)
@@ -38,10 +42,12 @@ void sale::getTotal(std::string totalAmount)
     std::cout << totalAmount << std::endl;
 }
 
-double sale::formateToDoubleCash(string amount)
+std::string sale::formatStringd(double num)
 {
-    return cashAmount = std::stod(amount);
-    
+    std::stringstream ss;
+    ss << std::fixed <<std::setprecision(2) << num;
+    std::string numStr = ss.str();
+    return numStr;
 }
 
 void sale::addItem(int item, int quantity, double itemPrice)
@@ -56,51 +62,91 @@ void sale::removeItem(int pos)
     auto itsku = itemSkuList.begin();
     auto itprice = itemPriceList.begin();
     auto itqty = itemQtyList.begin();
-    if ((pos -1) > 0)
+    if (pos >= 0)
     {
-        std::advance(itsku, pos -1);
-        std::advance(itqty, pos -1);
-        std::advance(itprice, pos -1);
+        std::advance(itsku, pos);
+        std::advance(itqty, pos);
+        std::advance(itprice, pos);
     }
-    if (pos -1 > 0)
+    if (pos >= 0)
     {
         itemSkuList.erase(itsku);
         itemQtyList.erase(itqty);
         itemPriceList.erase(itprice);
     }
-    else
-    {
-        itemSkuList.clear();
-        itemQtyList.clear();
-        itemPriceList.clear();
-    }
+}
+
+void sale::clearSkuList()
+{
+    itemSkuList.clear();
+}
+
+void sale::clearQtyList()
+{
+    itemQtyList.clear();
+}
+
+void sale::clearPriceList()
+{
+    itemPriceList.clear();
+}
+
+void sale::removeTranx()
+{
+    std::thread sku(clearSkuList);
+    std::thread qty(clearQtyList);
+    std::thread price(clearPriceList);
+    sku.join();
+    qty.join();
+    price.join();
 }
 
 int sale::scanRemoveItem(std::string sku)
 {
-    int posToRemove = 0;
-    int pos;
-    bool foundItem = false;
-    auto it = itemSkuList.begin();
-    while (!foundItem)
+    int posToRemove = -1;
+    int pos = 0;
+    for (auto it = itemSkuList.begin(); it != itemSkuList.end(); it++)
     {
-        posToRemove++;
-        if (*it == sku)
+        if (sku == std::to_string(*it))
         {
-            pos = posToRemove;
-            foundItem = true;
+            posToRemove = pos;
+            break;
         }
-        
-        if (it != itemSkuList.end())
-        {
-            it++;
-        }
-        else
-        {
-            foundItem = true;
-            pos = -1;
-        }
+        pos++;
     }
-    std::cout << pos << std::endl;
-    return pos;
+    return posToRemove;
 }
+
+void sale::getItem(int pos, int *sku, int *qty, double *price)
+{
+    auto skuIt = itemSkuList.begin(); 
+    auto qtyIt = itemQtyList.begin();
+    auto priceIt = itemPriceList.begin();
+
+    std::advance(skuIt, pos);
+    std::advance(qtyIt, pos);
+    std::advance(priceIt, pos);
+
+    if (sku != nullptr)
+        *sku = *skuIt;
+    if (qty != nullptr)
+        *qty = *qtyIt;
+    if (price != nullptr)
+        *price = *priceIt;
+}
+
+void sale::changeQty(int pos, int qty)
+{
+    auto it = itemQtyList.begin();
+    std::advance(it, pos);
+    *it = qty;
+}
+
+void sale::changePrice(int pos, double price)
+{
+    auto it = itemPriceList.begin();
+    std::advance(it, pos);
+    *it = price;
+}
+
+int sale::getTranxLength(){return itemSkuList.size();}
