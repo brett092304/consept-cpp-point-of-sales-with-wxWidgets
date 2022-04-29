@@ -25,9 +25,17 @@ void StartUp::start()
            fileAns.push_back(fileTags);
         }
         ifile.close();
-        CreateConnection::setConnectionStatus(fileAns);
-        MainFrame *frame = new MainFrame(wxT("Sales"));
-        frame->Show(true);
+        if (fileAns.at(1) != "" && fileAns.at(2) != "" && fileAns.at(4) != "" && fileAns.at(5) != "")
+        {
+            CreateConnection::setConnectionStatus(fileAns);
+            MainFrame *frame = new MainFrame(wxT("Sales"));
+            frame->Show(true);
+        }
+        else
+        {
+            SetUp *setUpFrame = new SetUp(wxT("Set Up"));
+            setUpFrame->Show(true);
+        }
     }
     else
     {

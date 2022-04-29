@@ -4,6 +4,11 @@
 #include "login.h"
 #include "connection.h"
 
+bool MainFrame::isManager = false;
+bool MainFrame::isTempManager = false;
+std::string MainFrame::cashirName = "";
+std::string MainFrame::cashirNumbers = "";
+
 MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint(-1, -1), wxSize(1, 1))
 {
     wxDisplay display;
@@ -52,14 +57,14 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     isManagerText = new wxStaticText(mainPanel, wxID_ANY, wxT("Manager"));
     transactionPersonText = new wxStaticText(mainPanel, wxID_ANY, wxT("Portage - Customer"));
     wxStaticText *transactionPersonLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Customer: "));
-    wxStaticText *loggedInLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Cashier: "));
-    wxStaticText *numbersLoggedInLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Name: "));
+    wxStaticText *loggedInLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Name: "));
+    wxStaticText *numbersLoggedInLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Cashier: "));
 
     loggedInH1Sizer->Add(loggedInLabel, wxSizerFlags(0).Expand().Border(wxALL, 2));
-    loggedInH1Sizer->Add(numbersLoggedIn, wxSizerFlags(0).Expand().Border(wxALL, 2));
+    loggedInH1Sizer->Add(personLoggedIn, wxSizerFlags(0).Expand().Border(wxALL, 2));
 
     loggedInH101Sizer->Add(numbersLoggedInLabel, wxSizerFlags(0).Expand().Border(wxALL, 2));
-    loggedInH101Sizer->Add(personLoggedIn, wxSizerFlags(0).Expand().Border(wxALL, 2));
+    loggedInH101Sizer->Add(numbersLoggedIn, wxSizerFlags(0).Expand().Border(wxALL, 2));
 
     loggedInH103Sizer->Add(transactionPersonLabel, wxSizerFlags(0).Expand().Border(wxALL, 2));
     loggedInH103Sizer->Add(transactionPersonText, wxSizerFlags(0).Expand().Border(wxALL, 2));
@@ -164,13 +169,13 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     wxBoxSizer *functionH2Sizer = new wxBoxSizer(wxHORIZONTAL);
 
     wxButton *functionChngeQtyBtn = new wxButton(mainPanel, 7003, wxT("Change Qty"));
-    wxButton *functionSuspendBtn = new wxButton(mainPanel, 7001, wxT("Suspend"));
+    wxButton *functionTaxExemptBtn = new wxButton(mainPanel, 7001, wxT("Tax Exempt"));
     wxButton *functionResumeBtn = new wxButton(mainPanel, 7002, wxT("Resume"));
     wxButton *functionNoSaleBtn = new wxButton(mainPanel, 7004, wxT("No Sale"));
     functionNoSaleBtn->Disable();
     wxButton *functionLogOutBtn = new wxButton(mainPanel, 7099, wxT("Logout"));
 
-    functionH1Sizer->Add(functionSuspendBtn, menuPanelSizerFlags);
+    functionH1Sizer->Add(functionTaxExemptBtn, menuPanelSizerFlags);
     functionH1Sizer->Add(functionNoSaleBtn, menuPanelSizerFlags);
     
     functionH2Sizer->Add(functionResumeBtn, menuPanelSizerFlags);
@@ -226,10 +231,16 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     wxButton *managerLogInBtn = new wxButton(mainPanel, 8001, wxT("Manager Login"));
     wxButton *managerRefundBtn = new wxButton(mainPanel, 8002, wxT("Refund"));
     wxButton *managerReturnBtn = new wxButton(mainPanel, 8003, wxT("Return"));
+    wxButton *managerDeleteTranx = new wxButton(mainPanel, 8004, wxT("Void Transaction"));
+    wxButton *managerDuplicateBtn = new wxButton(mainPanel, 8005, wxT("Copy Line"));
+    wxButton *managerSuspendBtn = new wxButton(mainPanel, 8006, wxT("Suspend"));
 
     managerMenuH1Sizer->Add(managerLogInBtn, menuPanelSizerFlags);
+    managerMenuH1Sizer->Add(managerSuspendBtn, menuPanelSizerFlags);
     managerMenuH1Sizer->Add(managerRefundBtn, menuPanelSizerFlags);
 
+    managerMenuH2Sizer->Add(managerDeleteTranx, menuPanelSizerFlags);
+    managerMenuH2Sizer->Add(managerDuplicateBtn, menuPanelSizerFlags);
     managerMenuH2Sizer->Add(managerReturnBtn, menuPanelSizerFlags);
 
     managerMenuVSizer->Add(managerMenuH1Sizer, menuPanelSizerFlags);
@@ -290,20 +301,15 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     dataTable->HideCol(5);
     dataTable->DeleteRows(0, 1, true);
     
-    dataTableVSizer->Add(dataTable, wxSizerFlags(1).Expand().Top().Border(wxALL, 0));
+    dataTableVSizer->Add(dataTable, wxSizerFlags(6).Expand().Top().Border(wxALL, 0));
 
     //money owed **total and subtotal**
-    wxFont totalFont  = wxFont(wxFontInfo(14));
+    wxFont totalFont  = wxFont(wxFontInfo(20));
     wxBoxSizer *totalHSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText *finalTotalLabel = new wxStaticText(mainPanel, 2001, wxT("Total: $"));
+    finalTotalLabel = new wxStaticText(mainPanel, 2001, wxT("Total: $"));
     finalTotalDue = new wxStaticText(mainPanel, 5002, wxT("0.00"));
     finalTotalLabel->SetFont(totalFont);
     finalTotalDue->SetFont(totalFont);
-
-    wxStaticText *totalSaleLabel = new wxStaticText(mainPanel, 5003, wxT("Total Sale: $"));
-    totalSaleAmount = new wxStaticText(mainPanel, 5004, wxT("0.00"));
-    totalSaleLabel->SetFont(totalFont);
-    totalSaleAmount->SetFont(totalFont);
 
     wxStaticText *subTotalLabel = new wxStaticText(mainPanel, 5005, wxT("SubTotal: $"));
     subTotalAmount = new wxStaticText(mainPanel, 5006, wxT("0.00"));
@@ -315,16 +321,12 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     taxTotalLabel->SetFont(totalFont);
     taxTotalAmount->SetFont(totalFont);
 
-    wxBoxSizer *finalTotalHSizer = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer *totalSaleHSizer = new wxBoxSizer(wxHORIZONTAL);
+    finalTotalHSizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer *subTotalHSizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer *taxTotalHSizer = new wxBoxSizer(wxHORIZONTAL);
 
     finalTotalHSizer->Add(finalTotalLabel, wxSizerFlags(0).Expand().Border(wxALL, 1));
     finalTotalHSizer->Add(finalTotalDue, wxSizerFlags(0).Expand().Border(wxALL, 1));
-
-    totalSaleHSizer->Add(totalSaleLabel, wxSizerFlags(0).Expand().Border(wxALL, 1));
-    totalSaleHSizer->Add(totalSaleAmount, wxSizerFlags(0).Expand().Border(wxALL, 1));
 
     subTotalHSizer->Add(subTotalLabel, wxSizerFlags(0).Expand().Border(wxALL, 1));
     subTotalHSizer->Add(subTotalAmount, wxSizerFlags(0).Expand().Border(wxALL, 1));
@@ -332,25 +334,24 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     taxTotalHSizer->Add(taxTotalLabel, wxSizerFlags(0).Expand().Border(wxALL, 1));
     taxTotalHSizer->Add(taxTotalAmount, wxSizerFlags(0).Expand().Border(wxALL, 1));
 
-    totalHSizer->Add(subTotalHSizer, wxSizerFlags(1).Expand().Border(wxALL, 4));
-    totalHSizer->Add(taxTotalHSizer, wxSizerFlags(1).Expand().Border(wxALL, 4));
-    totalHSizer->Add(totalSaleHSizer, wxSizerFlags(1).Expand().Border(wxALL, 4));
-    totalHSizer->Add(finalTotalHSizer, wxSizerFlags(1).Expand().Border(wxALL, 4));
+    totalHSizer->Add(subTotalHSizer, wxSizerFlags(1).Center().Border(wxALL, 4));
+    totalHSizer->Add(taxTotalHSizer, wxSizerFlags(1).Center().Border(wxALL, 4));
+    totalHSizer->Add(finalTotalHSizer, wxSizerFlags(1).Center().Border(wxALL, 4));
 
-    dataTableVSizer->Add(totalHSizer, wxSizerFlags(0).Expand().Border(wxALL, 4));
+    dataTableVSizer->Add(totalHSizer, wxSizerFlags(1).Expand().Border(wxALL, 20));
     
     //Add elements to mainsizer
     elementsHSizer->Add(dataTableVSizer, wxSizerFlags(1).Expand().Top().Border(wxALL, 4));
     elementsHSizer->Add(elementsVSizer, wxSizerFlags(1).Expand().Top().Border(wxALL, 4));
     elementsVSizer->Add(loggedInHSizer, wxSizerFlags(0).Expand().Border(wxALL, 4));
     elementsVSizer->Add(skuHSizer, wxSizerFlags(0).Expand().Top().Border(wxALL, 4));
-    elementsVSizer->Add(virtNumPadSizer, wxSizerFlags(1).Expand().Top().Border(wxALL, 4));
-    elementsVSizer->Add(mainMenuVSizer, wxSizerFlags(2).Expand().Border(wxALL, 4));
-    elementsVSizer->Add(paymentVSizer, wxSizerFlags(2).Expand().Border(wxALL, 4));
+    elementsVSizer->Add(virtNumPadSizer, wxSizerFlags(2).Expand().Top().Border(wxALL, 4));
+    elementsVSizer->Add(mainMenuVSizer, wxSizerFlags(3).Expand().Border(wxALL, 4));
+    elementsVSizer->Add(paymentVSizer, wxSizerFlags(3).Expand().Border(wxALL, 4));
     paymentVSizer->Show(false);
-    elementsVSizer->Add(functionVSizer, wxSizerFlags(2).Expand().Border(wxALL, 4));
+    elementsVSizer->Add(functionVSizer, wxSizerFlags(3).Expand().Border(wxALL, 4));
     functionVSizer->Show(false);
-    elementsVSizer->Add(managerMenuVSizer, wxSizerFlags(2).Expand().Border(wxALL, 4));
+    elementsVSizer->Add(managerMenuVSizer, wxSizerFlags(3).Expand().Border(wxALL, 4));
     managerMenuVSizer->Show(false);
     
     mainVSizer->Add(elementsHSizer, wxSizerFlags(1).Expand().Top().Border(wxALL, 5));
@@ -389,6 +390,17 @@ void MainFrame::OnLogout(bool loginManager)
     loggedIn = false;
     isTempManager = false;
     isManagerText->Show(false);
+    if (!loginManager)
+    {
+        if (tablePos >= 0)
+        {
+            sale sale;
+            sale.removeTranx();
+            dataTable->DeleteRows(0, dataTable->GetNumberRows());
+            tablePos = -1;
+            totalTranx();
+        }
+    }
 
     if (loginFrame->ShowModal() == wxOK)
     {
@@ -396,9 +408,14 @@ void MainFrame::OnLogout(bool loginManager)
         loggedIn = true;
         if (loginManager)
         {
-            isTempManager = true;
+            if (isTempManager)
+            {
+                isManagerText->Show(true);
+            }
+        }
+        if (isManager)
+        {
             isManagerText->Show(true);
-            std::cout << isTempManager << std::endl;
         }
         loggedInHSizer->Layout();
     }
@@ -408,6 +425,10 @@ void MainFrame::OnLogout(bool loginManager)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         this->Close(true);
     }
+    wxString wxCashirName(cashirName);
+    wxString wxCashirNumbers(cashirNumbers);
+    personLoggedIn->SetLabelText(wxCashirName);
+    numbersLoggedIn->SetLabelText(wxCashirNumbers);
 }
 
 void MainFrame::LkUpItem()
@@ -433,16 +454,42 @@ void MainFrame::reciveCash()
 {
     if (UPCorPLUBox->GetLineText(0) != "")
     {
-        sale sale;
-        //sale.getTotal(std::string(finalTotalDue->GetLabelText().mb_str()));
-        sale.getCashAmount(std::string(UPCorPLUBox->GetLineText(0).mb_str()));
+        double cashRecived = wxAtof(UPCorPLUBox->GetLineText(0).mb_str());
         UPCorPLUText->SetLabel(wxT("Sku or Upc: "));
         UPCorPLUBox->Clear();
         gettingCash = false;
+        determineTotalAfterPayment(cashRecived);
     }
     else
     {
         UPCorPLUBox->SetFocus();
+    }
+}
+
+void MainFrame::determineTotalAfterPayment(double payment)
+{
+    if (payment == totalDue)
+    {
+        deleteTranx(true);
+        totalTranx();
+    }
+    else if (payment > totalDue)
+    {
+        if (!hasChange)
+        {
+            double change = payment - totalDue;
+            finalTotalLabel->SetLabelText(wxT("Change: $"));
+            finalTotalDue->SetLabelText(sale::formatStringd(change));
+            finalTotalHSizer->Layout();
+            hasChange = true;
+        }
+    }
+    else if (payment < totalDue)
+    {
+        recievedPartialPayment = true;
+        double balence = totalDue - payment;
+        totalDue = balence;
+        finalTotalDue->SetLabelText(sale::formatStringd(balence));
     }
 }
 
@@ -453,7 +500,29 @@ void MainFrame::scanDelete()
     std::string sku = std::string(skuToRemove.mb_str());
     std::cout << sku << std::endl;
     deleteItem(sale.scanRemoveItem(sku));
+    cancelOperation();
     scanDeleteItem = false;
+}
+
+void MainFrame::duplicateTableLine()
+{
+    if (isTempManager || isManager)
+    {
+        if (tablePos >= 0)
+        {
+            sale sale;
+            int *sku = new int;
+            int *qty = new int;
+            double *price = new double;
+            sale.getItem(tablePos, sku, qty, price);
+            sale.addItem(*sku, *qty, *price);
+            std::string desc = std::string(dataTable->GetCellValue(tablePos, 0).mb_str());
+            updateTable(desc, std::to_string(*qty), *price, std::to_string(*sku));
+            delete sku;
+            delete qty;
+            delete price;
+        }
+    }
 }
 
 void MainFrame::addItem()
@@ -469,10 +538,104 @@ void MainFrame::addItem()
 
 void MainFrame::addQty()
 {
-    sale sale;
     wxString qtyStr = UPCorPLUBox->GetLineText(0);
     cancelOperation();
-    int qty = wxAtoi(qtyStr);
+    qtyToAdd = wxAtoi(qtyStr);
+    
+    getFromDatabase();
+}
+
+void MainFrame::changeQty()
+{
+    if (tablePos >= 0)
+    {
+        sale sale;
+        int quantity = wxAtoi(UPCorPLUBox->GetLineText(0));
+        double *price = new double;
+        sale.getItem(tablePos, nullptr, nullptr, price);
+        sale.changeQty(tablePos, quantity);
+        dataTable->SetCellValue(tablePos, 1, std::to_string(quantity));
+        double actualPrice = *price * quantity;
+        delete price;
+        dataTable->SetCellValue(tablePos, 2, sale::formatStringd(actualPrice));   
+        cancelOperation();
+        changingQty = false;
+    }
+}
+
+void MainFrame::changePrice()
+{
+    if (tablePos >= 0)
+    {
+        sale sale;
+        double price = wxAtof(UPCorPLUBox->GetLineText(0));
+        int *qty = new int;
+        sale.getItem(tablePos, nullptr, qty, nullptr);
+        sale.changePrice(tablePos, price);
+        double actualPrice = *qty * price;
+        delete qty;
+        dataTable->SetCellValue(tablePos, 2, sale::formatStringd(actualPrice));
+        cancelOperation();
+        changingPrice = false;
+    }
+}
+
+double MainFrame::subTotalTranx()
+{
+    double subTotal = 0.0;
+    sale sale;
+    int *sku = new int;
+    int *qty = new int;
+    double *price  = new double;
+    for (int i = 0; i < sale.getTranxLength(); i++)
+    {
+        sale.getItem(i, sku, qty, price);
+        subTotal += (*price * *qty);
+    }
+    delete sku;
+    delete qty;
+    delete price;
+    return subTotal;
+}
+
+double MainFrame::taxTotalTranx(double subTotal)
+{
+    return subTotal * 0.055;
+}
+
+void MainFrame::totalTranx()
+{
+    double total = 0.0;
+    double subTotal = subTotalTranx();
+    double tax = taxTotalTranx(subTotal);
+    if (isTaxExempt)
+    {
+        total = subTotal;
+        tax = 0.0;
+    }
+    else
+        total = subTotal + tax;
+
+    subTotalAmount->SetLabelText(sale::formatStringd(subTotal));
+    taxTotalAmount->SetLabelText(sale::formatStringd(tax));
+    if (!recievedPartialPayment && !hasChange)
+    {
+        finalTotalDue->SetLabelText(sale::formatStringd(total));
+        totalDue = total;
+    } 
+}
+
+void MainFrame::taxExempt()
+{
+    std::string taxExemptNum = UPCorPLUBox->GetLineText(0).ToStdString();
+    //check number from database to see if number actually works
+    cancelOperation();
+    isTaxExempt = true;
+}
+
+void MainFrame::getFromDatabase()
+{
+    sale sale;
     std::vector<std::string> connectionData = CreateConnection::connection(std::to_string(itemToAdd));
     if (connectionData.size() >= 1)
     {
@@ -501,21 +664,20 @@ void MainFrame::addQty()
             priceToAdd = regularprice;
         }
 
-        sale.addItem(itemToAdd, qty, priceToAdd);
-        updateTable(desc, std::to_string(qty), priceToAdd, sku);
+        sale.addItem(itemToAdd, qtyToAdd, priceToAdd);
+        updateTable(desc, std::to_string(qtyToAdd), priceToAdd, sku);
     }
     else
     {
         Error("Item NOT Found Error");
     }
     gettingItem = false;
-
 }
 
 void MainFrame::updateTable(std::string desc, std::string qty, double price, std::string sku)
 {
     double visualPriceD = std::stod(qty) * price;
-    std::string visualPriceValue = std::to_string((visualPriceD * 100) / 100);
+    std::string visualPriceValue = sale::formatStringd((visualPriceD * 100) / 100);
 
     std::string tableRow[6] = {desc, qty, visualPriceValue, sku, "0", "0"};
     dataTable->AppendRows(1);
@@ -532,10 +694,30 @@ void MainFrame::updateTable(std::string desc, std::string qty, double price, std
     dataTable->SelectRow(tablePos);
 }
 
+void MainFrame::deleteTranx(bool recievedPayment)
+{
+    if (isManager || isTempManager || recievedPayment)
+    {
+        if (tablePos >= 0)
+        {
+            sale sale;
+            sale.removeTranx();
+            dataTable->DeleteRows(0, dataTable->GetNumberRows());
+            tablePos = -1;
+
+            if (isTempManager)
+                isManagerText->Show(false);
+            isTempManager = false;
+            recievedPartialPayment = false;
+            isTaxExempt = false;
+        }
+    }
+}
+
 void MainFrame::deleteItem(int pos)
 {
     sale sale;
-    if (pos > -1)
+    if (pos >= 0)
     {
         sale.removeItem(pos);
         tablePos--;

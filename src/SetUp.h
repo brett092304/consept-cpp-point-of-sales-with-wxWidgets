@@ -11,4 +11,8 @@ class SetUp : public wxFrame
         wxTextCtrl *userBox;
         wxTextCtrl *passBox;
 
+        wxTextCtrl *userPathBox;
+        wxTextCtrl *userDBUserBox;
+        wxTextCtrl *userPassBox;
+
 };

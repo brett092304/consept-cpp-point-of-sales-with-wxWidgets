@@ -14,16 +14,28 @@ class MainFrame : public wxFrame
         void reciveCash();
         void scanDelete();
         void deleteItem(int pos);
+        void deleteTranx(bool recievedPayment);
+        void duplicateTableLine();
         void addItem();
         void addQty();
+        void changeQty();
+        void changePrice();
+        void getFromDatabase();
         void cancelOperation();
         void addDataToTable(std::vector<std::string> data);
         std::string cashAmountEntered;
         static void Error(std::string errorMessage);
         bool loggedIn = false;
-        bool isManager = false;
-        bool isTempManager = false;
+        static bool isManager;
+        static bool isTempManager;
+        static std::string cashirName;
+        static std::string cashirNumbers;
         void updateTable(std::string desc, std::string qty, double price, std::string sku);
+        void totalTranx();
+        double subTotalTranx();
+        double taxTotalTranx(double subtotal);
+        void determineTotalAfterPayment(double payment);
+        void taxExempt();
         
     private:
         wxPanel *mainPanel;
@@ -46,18 +58,28 @@ class MainFrame : public wxFrame
         wxBoxSizer *managerMenuVSizer;
         wxBoxSizer *loggedInHSizer;
 
+        wxBoxSizer *finalTotalHSizer;
+        wxStaticText *finalTotalLabel;
         wxStaticText *finalTotalDue;
         wxStaticText *totalSaleAmount;
         wxStaticText *subTotalAmount;
         wxStaticText *taxTotalAmount;
 
-        int tablePos = 0;
+        int tablePos = -1;
 
         bool gettingCash = false;
         bool gettingItem = false;
         bool scanDeleteItem = false;
+        bool changingQty = false;
+        bool changingPrice = false;
+        bool isTaxExempt = false;
+        bool settingTaxExempt = false;
+        bool recievedPartialPayment = false;
+        bool hasChange = false;
 
         int itemToAdd;
+        int qtyToAdd;
+        double totalDue;
 
         const int ID_Logout = wxNewId();
 };
