@@ -2,8 +2,11 @@
 #include "lkupitemDialog.h"
 #include "sale.h"
 #include "login.h"
+#include "ManualCreditCard.h"
 #include "connection.h"
+#include "main.h"
 
+bool MainFrame::isDebug = false;
 bool MainFrame::isManager = false;
 bool MainFrame::isTempManager = false;
 std::string MainFrame::cashirName = "";
@@ -11,13 +14,12 @@ std::string MainFrame::cashirNumbers = "";
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint(-1, -1), wxSize(1, 1))
 {
-    wxDisplay display;
-    wxRect size = display.GetClientArea();
-    this->SetSize(size);
+    wxSize screenSize = wxGetDisplaySize();
+    this->SetSize(screenSize);
 
     menuBar = new wxMenuBar;
     file = new wxMenu;
-    file->Append(ID_Logout, wxT("&Quit\tCtrl+Q"));
+    file->Append(1101, wxT("&Quit\tCtrl+Q"));
 
     menuBar->Append(file, wxT("&File"));
     SetMenuBar(menuBar);
@@ -25,7 +27,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     this->Bind(wxEVT_MENU, &MainFrame::MenuLgout, this);
 
     mainPanel = new wxPanel(this, 50, wxDefaultPosition, wxDefaultSize);
-    wxBoxSizer *mainVSizer = new wxBoxSizer(wxVERTICAL);
+    mainVSizer = new wxBoxSizer(wxVERTICAL);
 
     //sku sizers and elements
     wxBoxSizer *elementsHSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -55,6 +57,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     personLoggedIn = new wxStaticText(mainPanel, wxID_ANY, wxT(""));
     numbersLoggedIn = new wxStaticText(mainPanel, wxID_ANY, wxT(""));
     isManagerText = new wxStaticText(mainPanel, wxID_ANY, wxT("Manager"));
+    isDebugText = new wxStaticText(mainPanel, wxID_ANY, wxT("Debug Mode"));
     transactionPersonText = new wxStaticText(mainPanel, wxID_ANY, wxT("Portage - Customer"));
     wxStaticText *transactionPersonLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Customer: "));
     wxStaticText *loggedInLabel = new wxStaticText(mainPanel, wxID_ANY, wxT("Name: "));
@@ -70,6 +73,8 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     loggedInH103Sizer->Add(transactionPersonText, wxSizerFlags(0).Expand().Border(wxALL, 2));
 
     loggedInH2Sizer->Add(isManagerText, wxSizerFlags(0).Expand().Border(wxALL, 2));
+    loggedInH2Sizer->Add(isDebugText, wxSizerFlags(0).Expand().Border(wxALL, 2));
+    isDebugText->Show(false);
     isManagerText->Show(false);
 
     loggedInV1Sizer->Add(loggedInH1Sizer, wxSizerFlags(0).Expand().Border(wxALL, 2));
@@ -200,8 +205,8 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     wxButton *storeCouponMenuBtn = new wxButton(mainPanel, 6003, wxT("Store Coupon"));
     wxBitmap uparrow;
     wxBitmap downarrow;
-    uparrow.LoadFile("/home/brett/C++/src/uparrow.bmp", wxBITMAP_TYPE_BMP);
-    downarrow.LoadFile("/home/brett/C++/src/downarrow.bmp", wxBITMAP_TYPE_BMP);
+    uparrow.LoadFile(MyApp::getPath() + "uparrow.bmp", wxBITMAP_TYPE_BMP);
+    downarrow.LoadFile(MyApp::getPath() + "downarrow.bmp", wxBITMAP_TYPE_BMP);
 
     wxBitmapButton *upListBtn = new wxBitmapButton(mainPanel, 6004, uparrow);
     wxBitmapButton *downListBtn = new wxBitmapButton(mainPanel, 6005, downarrow);
@@ -286,7 +291,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
 
     dataTable = new wxGrid(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER);
 
-    dataTable->CreateGrid(1, 6);
+    dataTable->CreateGrid(1, 4);
     dataTable->SetDefaultRowSize(50);
     dataTable->EnableEditing(false);
     dataTable->SetRowLabelSize(0);
@@ -295,10 +300,6 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     dataTable->SetColLabelValue(2, "Price");
     dataTable->SetColLabelValue(3, "sku");
     dataTable->HideCol(3);
-    dataTable->SetColLabelValue(4, "modified");
-    dataTable->HideCol(4);
-    dataTable->SetColLabelValue(5, "Code");
-    dataTable->HideCol(5);
     dataTable->DeleteRows(0, 1, true);
     
     dataTableVSizer->Add(dataTable, wxSizerFlags(6).Expand().Top().Border(wxALL, 0));
@@ -362,10 +363,8 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     mainPanel->Bind(wxEVT_CHAR_HOOK, &MainFrame::keyPress, this);
     wxWindow::Layout();
     
-    
-    OnLogout(false);
-
     UPCorPLUBox->SetFocus();
+    OnLogout(false);
 }
 
 void MainFrame::GridSize(wxSizeEvent &event)
@@ -374,6 +373,9 @@ void MainFrame::GridSize(wxSizeEvent &event)
     dataTable->SetColSize(0, gridWidth * 5/8);
     dataTable->SetColSize(1, gridWidth * 1/8);
     dataTable->SetColSize(2, gridWidth * 2/8);
+
+    mainVSizer->Layout();
+    wxWindow::Layout();
     event.Skip();
 }
 
@@ -394,8 +396,8 @@ void MainFrame::OnLogout(bool loginManager)
     {
         if (tablePos >= 0)
         {
-            sale sale;
-            sale.removeTranx();
+            
+            sale::removeTranx();
             dataTable->DeleteRows(0, dataTable->GetNumberRows());
             tablePos = -1;
             totalTranx();
@@ -417,6 +419,10 @@ void MainFrame::OnLogout(bool loginManager)
         {
             isManagerText->Show(true);
         }
+        if (isDebug)
+        {
+            isDebugText->Show(true);
+        }
         loggedInHSizer->Layout();
     }
     else
@@ -435,6 +441,21 @@ void MainFrame::LkUpItem()
 {
     LkUpItemDialog *LkUpFrame = new LkUpItemDialog(wxT("Look-Up Item"), UPCorPLUBox->GetLineText(0));
     LkUpFrame->Show(true);
+}
+
+void MainFrame::getManualCard()
+{
+    double *cardAmount = new double;
+    *cardAmount = 0.00;
+    ManualCreditCard *manualCard = new ManualCreditCard("Manual Card", totalDue, cardAmount);
+    manualCard->Show(true);
+    if (isDebug)
+    {
+        std::cout << *cardAmount << std::endl;
+    }
+    double amount = *cardAmount;
+    delete cardAmount;
+    determineTotalAfterPayment(amount);
 }
 
 void MainFrame::getCash()
@@ -468,6 +489,8 @@ void MainFrame::reciveCash()
 
 void MainFrame::determineTotalAfterPayment(double payment)
 {
+    totalDue = std::stod(sale::formatStringd(totalDue));
+    payment = std::stod(sale::formatStringd(payment)); //to trunkate the doubles to only #.##
     if (payment == totalDue)
     {
         deleteTranx(true);
@@ -495,11 +518,13 @@ void MainFrame::determineTotalAfterPayment(double payment)
 
 void MainFrame::scanDelete()
 {
-    sale sale;
     wxString skuToRemove = UPCorPLUBox->GetLineText(0);
     std::string sku = std::string(skuToRemove.mb_str());
-    std::cout << sku << std::endl;
-    deleteItem(sale.scanRemoveItem(sku));
+    if (isDebug)
+    {
+        std::cout << sku << std::endl;
+    }
+    deleteItem(sale::scanRemoveItem(sku));
     cancelOperation();
     scanDeleteItem = false;
 }
@@ -510,17 +535,14 @@ void MainFrame::duplicateTableLine()
     {
         if (tablePos >= 0)
         {
-            sale sale;
-            int *sku = new int;
-            int *qty = new int;
-            double *price = new double;
-            sale.getItem(tablePos, sku, qty, price);
-            sale.addItem(*sku, *qty, *price);
+            sale item = sale::getItem(tablePos);
+            sale::addItem(item.getSku(), item.getQty(), item.getPrice());
+            if (isDebug)
+            {
+                std::cout << item.getSku() << " " << item.getQty() << " " << item.getPrice() << std::endl;
+            }
             std::string desc = std::string(dataTable->GetCellValue(tablePos, 0).mb_str());
-            updateTable(desc, std::to_string(*qty), *price, std::to_string(*sku));
-            delete sku;
-            delete qty;
-            delete price;
+            updateTable(desc, std::to_string(item.getQty()), item.getPrice(), std::to_string(item.getSku()));
         }
     }
 }
@@ -529,10 +551,8 @@ void MainFrame::addItem()
 {
     wxString itemStr = UPCorPLUBox->GetLineText(0);
     UPCorPLUBox->Clear();
-    //std::cout << itemStr << std::endl;
     UPCorPLUText->SetLabelText(wxT("Quantity: "));
     itemToAdd = wxAtoi(itemStr);
-    //std::cout << itemToAddStr << std::endl;
     gettingItem = true;
 }
 
@@ -549,17 +569,15 @@ void MainFrame::changeQty()
 {
     if (tablePos >= 0)
     {
-        sale sale;
         int quantity = wxAtoi(UPCorPLUBox->GetLineText(0));
-        double *price = new double;
-        sale.getItem(tablePos, nullptr, nullptr, price);
-        sale.changeQty(tablePos, quantity);
+        sale item = sale::getItem(tablePos);
+        item.changeQty(quantity, tablePos);
         dataTable->SetCellValue(tablePos, 1, std::to_string(quantity));
-        double actualPrice = *price * quantity;
-        delete price;
-        dataTable->SetCellValue(tablePos, 2, sale::formatStringd(actualPrice));   
+        double actualPrice = item.getPrice() * quantity;
+        dataTable->SetCellValue(tablePos, 2, sale::formatStringd(actualPrice));
         cancelOperation();
         changingQty = false;
+        totalTranx();
     }
 }
 
@@ -567,13 +585,10 @@ void MainFrame::changePrice()
 {
     if (tablePos >= 0)
     {
-        sale sale;
         double price = wxAtof(UPCorPLUBox->GetLineText(0));
-        int *qty = new int;
-        sale.getItem(tablePos, nullptr, qty, nullptr);
-        sale.changePrice(tablePos, price);
-        double actualPrice = *qty * price;
-        delete qty;
+        sale item = sale::getItem(tablePos);
+        item.changePrice(price, tablePos);
+        double actualPrice = item.getQty() * price;
         dataTable->SetCellValue(tablePos, 2, sale::formatStringd(actualPrice));
         cancelOperation();
         changingPrice = false;
@@ -583,18 +598,11 @@ void MainFrame::changePrice()
 double MainFrame::subTotalTranx()
 {
     double subTotal = 0.0;
-    sale sale;
-    int *sku = new int;
-    int *qty = new int;
-    double *price  = new double;
-    for (int i = 0; i < sale.getTranxLength(); i++)
+    for (int i = 0; i < sale::getTranxLength(); i++)
     {
-        sale.getItem(i, sku, qty, price);
-        subTotal += (*price * *qty);
+        sale item = sale::getItem(i);
+        subTotal += (item.getPrice() * item.getQty());
     }
-    delete sku;
-    delete qty;
-    delete price;
     return subTotal;
 }
 
@@ -635,7 +643,6 @@ void MainFrame::taxExempt()
 
 void MainFrame::getFromDatabase()
 {
-    sale sale;
     std::vector<std::string> connectionData = CreateConnection::connection(std::to_string(itemToAdd));
     if (connectionData.size() >= 1)
     {
@@ -664,7 +671,7 @@ void MainFrame::getFromDatabase()
             priceToAdd = regularprice;
         }
 
-        sale.addItem(itemToAdd, qtyToAdd, priceToAdd);
+        sale::addItem(itemToAdd, qtyToAdd, priceToAdd);
         updateTable(desc, std::to_string(qtyToAdd), priceToAdd, sku);
     }
     else
@@ -679,7 +686,7 @@ void MainFrame::updateTable(std::string desc, std::string qty, double price, std
     double visualPriceD = std::stod(qty) * price;
     std::string visualPriceValue = sale::formatStringd((visualPriceD * 100) / 100);
 
-    std::string tableRow[6] = {desc, qty, visualPriceValue, sku, "0", "0"};
+    std::string tableRow[4] = {desc, qty, visualPriceValue, sku};
     dataTable->AppendRows(1);
     int rowCount = dataTable->GetNumberRows() - 1;
     tablePos = rowCount;
@@ -692,6 +699,14 @@ void MainFrame::updateTable(std::string desc, std::string qty, double price, std
         dataTable->SetCellAlignment(rowCount, i, wxCenter, wxCenter);
     }
     dataTable->SelectRow(tablePos);
+    if (isDebug)
+    {
+        for (int i = 0; i < 4; i ++)
+        {
+            std::cout << tableRow[i] << " ";
+        }
+        std::cout << "\n";
+    }
 }
 
 void MainFrame::deleteTranx(bool recievedPayment)
@@ -700,8 +715,7 @@ void MainFrame::deleteTranx(bool recievedPayment)
     {
         if (tablePos >= 0)
         {
-            sale sale;
-            sale.removeTranx();
+            sale::removeTranx();
             dataTable->DeleteRows(0, dataTable->GetNumberRows());
             tablePos = -1;
 
@@ -716,10 +730,9 @@ void MainFrame::deleteTranx(bool recievedPayment)
 
 void MainFrame::deleteItem(int pos)
 {
-    sale sale;
     if (pos >= 0)
     {
-        sale.removeItem(pos);
+        sale::removeItem(pos);
         tablePos--;
         dataTable->DeleteRows(pos, 1);
     }
@@ -731,7 +744,15 @@ void MainFrame::deleteItem(int pos)
 
 void MainFrame::MenuLgout(wxCommandEvent &event)
 {
-    this->Close(true);
+    int key = event.GetId();
+    switch(key)
+    {
+        case 1101:
+            this->Close(true);
+            break;
+        default:
+            break;
+    }
     event.Skip();
 }
 

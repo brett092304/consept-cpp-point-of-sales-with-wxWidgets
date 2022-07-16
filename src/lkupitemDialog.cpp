@@ -1,5 +1,6 @@
 #include "lkupitemDialog.h"
 #include "connection.h"
+#include "program.h"
 
 LkUpItemDialog::LkUpItemDialog(const wxString &title, wxString skuwx) : wxDialog(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize)
 {
@@ -37,7 +38,8 @@ LkUpItemDialog::LkUpItemDialog(const wxString &title, wxString skuwx) : wxDialog
     
         for (int j = 0; j < data.size(); j++)
         {
-            //std::cout << data.at(j).at(k) << std::endl;
+            if (MainFrame::isDebug)
+                std::cout << data.at(j).at(k) << std::endl;
             dataTable->SetCellValue(k, j, data.at(j).at(k));
             dataTable->SetCellFont(k, j, tableFont);
             dataTable->SetCellAlignment(k, j, wxCenter, wxCenter);

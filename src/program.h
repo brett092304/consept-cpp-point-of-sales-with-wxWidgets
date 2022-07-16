@@ -12,6 +12,7 @@ class MainFrame : public wxFrame
         void LkUpItem();
         void getCash();
         void reciveCash();
+        void getManualCard();
         void scanDelete();
         void deleteItem(int pos);
         void deleteTranx(bool recievedPayment);
@@ -26,6 +27,7 @@ class MainFrame : public wxFrame
         std::string cashAmountEntered;
         static void Error(std::string errorMessage);
         bool loggedIn = false;
+        static bool isDebug;
         static bool isManager;
         static bool isTempManager;
         static std::string cashirName;
@@ -39,6 +41,7 @@ class MainFrame : public wxFrame
         
     private:
         wxPanel *mainPanel;
+        wxBoxSizer *mainVSizer;
         wxMenuBar *menuBar;
         wxMenu *file;
         wxTextCtrl *UPCorPLUBox;
@@ -51,6 +54,7 @@ class MainFrame : public wxFrame
         wxStaticText *personLoggedIn;
         wxStaticText *numbersLoggedIn;
         wxStaticText *isManagerText;
+        wxStaticText *isDebugText;
         wxStaticText *transactionPersonText;
         wxBoxSizer *functionVSizer;
         wxBoxSizer *paymentVSizer;
@@ -81,5 +85,4 @@ class MainFrame : public wxFrame
         int qtyToAdd;
         double totalDue;
 
-        const int ID_Logout = wxNewId();
 };

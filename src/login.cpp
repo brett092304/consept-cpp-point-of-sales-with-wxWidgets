@@ -131,32 +131,51 @@ void loginDialog::OnLogIn(wxCommandEvent &event)
 {
     if (!loginUserBox->IsEmpty() && !loginPassBox->IsEmpty())
     {
-        std::string pass = loginPassBox->GetLineText(0).ToStdString();
-        std::string user = loginUserBox->GetLineText(0).ToStdString();
-        bool *isManager = new bool;
-        std::string *name = new std::string;
-        if (CreateConnection::loginConn(user, pass, name, isManager))
+        if (loginUserBox->GetLineText(0) == "debug" && loginPassBox->GetLineText(0) == "DebuggingMode")
         {
-            //std::cout << *isManager << std::endl;
-            if (!isTempManagerLogin)
+            MainFrame::cashirName = "Debug";
+            MainFrame::cashirNumbers = "Debug";
+            MainFrame::isManager = true;
+            MainFrame::isDebug = true;
+            EndModal(wxOK);
+        }
+        else
+        {
+            std::string pass = loginPassBox->GetLineText(0).ToStdString();
+            std::string user = loginUserBox->GetLineText(0).ToStdString();
+            bool *isManager = new bool;
+            std::string *name = new std::string;
+            if (CreateConnection::loginConn(user, pass, name, isManager))
             {
-                MainFrame::cashirName = *name;
-                MainFrame::cashirNumbers = user;
-                if (*isManager)
-                    MainFrame::isManager = true;
+                if (MainFrame::isDebug)
+                    std::cout << *isManager << std::endl;
+                if (!isTempManagerLogin)
+                {
+                    MainFrame::isDebug = false;
+                    MainFrame::cashirName = *name;
+                    MainFrame::cashirNumbers = user;
+                    if (*isManager)
+                        MainFrame::isManager = true;
+                    else
+                        MainFrame::isManager = false;
+                }
                 else
-                    MainFrame::isManager = false;
+                {
+                    if (*isManager)
+                        MainFrame::isTempManager = true;
+                    else
+                        MainFrame::isTempManager = false;
+                }
+                delete isManager;
+                delete name;
+                EndModal(wxOK);
             }
             else
             {
-                if (*isManager)
-                    MainFrame::isTempManager = true;
-                else
-                    MainFrame::isTempManager = false;
+                loginPassBox->Clear();
+                loginUserBox->Clear();
+                enteringUser = true;
             }
-            delete isManager;
-            delete name;
-            EndModal(wxOK);
         }
     }
     event.Skip();

@@ -1,9 +1,14 @@
 #include "sale.h"
 #include "program.h"
 using std::string;
-std::list<int> sale::itemSkuList = {};
-std::list<double> sale::itemPriceList = {};
-std::list<int> sale::itemQtyList = {};
+std::list<sale> sale::itemList = {};
+
+sale::sale(int sku, int qty, double price)
+{
+    this->itemSku = sku;
+    this->itemQty = qty;
+    this->itemPrice = price;
+}
 
 string sale::formatTotalPrice(int n)
 {
@@ -19,10 +24,12 @@ string sale::formatTotalPrice(int n)
 double sale::getCashAmount(string amount)
 {
     string cashReady;
-    std::cout << amount << std::endl;
+    if (MainFrame::isDebug)
+        std::cout << amount << std::endl;
     //amount.erase(std::remove(amount.begin(), amount.end(), '.'), amount.end());
     cashReady = amount;
-    std::cout << cashReady << std::endl;
+    if (MainFrame::isDebug)
+        std::cout << cashReady << std::endl;
     double cashRecived = 0.0;
     try
     {
@@ -37,7 +44,7 @@ double sale::getCashAmount(string amount)
     return cashRecived;
 }
 
-void sale::getTotal(std::string totalAmount)
+void sale::printTotal(std::string totalAmount)
 {
     std::cout << totalAmount << std::endl;
 }
@@ -50,64 +57,36 @@ std::string sale::formatStringd(double num)
     return numStr;
 }
 
-void sale::addItem(int item, int quantity, double itemPrice)
+void sale::addItem(int item, int quantity, double price)
 {
-    itemSkuList.push_back(item);
-    itemQtyList.push_back(quantity);
-    itemPriceList.push_back(itemPrice);
+    itemList.push_back(sale(item, quantity, price));
 }
 
 void sale::removeItem(int pos)
 {
-    auto itsku = itemSkuList.begin();
-    auto itprice = itemPriceList.begin();
-    auto itqty = itemQtyList.begin();
+    auto itsku = itemList.begin();
     if (pos >= 0)
     {
         std::advance(itsku, pos);
-        std::advance(itqty, pos);
-        std::advance(itprice, pos);
     }
     if (pos >= 0)
     {
-        itemSkuList.erase(itsku);
-        itemQtyList.erase(itqty);
-        itemPriceList.erase(itprice);
+        itemList.erase(itsku);
     }
-}
-
-void sale::clearSkuList()
-{
-    itemSkuList.clear();
-}
-
-void sale::clearQtyList()
-{
-    itemQtyList.clear();
-}
-
-void sale::clearPriceList()
-{
-    itemPriceList.clear();
 }
 
 void sale::removeTranx()
 {
-    std::thread sku(clearSkuList);
-    std::thread qty(clearQtyList);
-    std::thread price(clearPriceList);
-    sku.join();
-    qty.join();
-    price.join();
+    itemList.clear();
 }
 
 int sale::scanRemoveItem(std::string sku)
 {
     int posToRemove = -1;
     int pos = 0;
-    for (auto it = itemSkuList.begin(); it != itemSkuList.end(); it++)
+    for (auto it = itemList.begin(); it != itemList.end(); it++)
     {
-        if (sku == std::to_string(*it))
+        if (sku == std::to_string(it->itemSku))
         {
             posToRemove = pos;
             break;
@@ -117,36 +96,29 @@ int sale::scanRemoveItem(std::string sku)
     return posToRemove;
 }
 
-void sale::getItem(int pos, int *sku, int *qty, double *price)
+sale sale::getItem(int pos)
 {
-    auto skuIt = itemSkuList.begin(); 
-    auto qtyIt = itemQtyList.begin();
-    auto priceIt = itemPriceList.begin();
-
+    auto skuIt = itemList.begin();
     std::advance(skuIt, pos);
-    std::advance(qtyIt, pos);
-    std::advance(priceIt, pos);
-
-    if (sku != nullptr)
-        *sku = *skuIt;
-    if (qty != nullptr)
-        *qty = *qtyIt;
-    if (price != nullptr)
-        *price = *priceIt;
+    return *skuIt;
 }
 
-void sale::changeQty(int pos, int qty)
+void sale::changeQty(int qty, int pos)
 {
-    auto it = itemQtyList.begin();
+    auto it = itemList.begin();
     std::advance(it, pos);
-    *it = qty;
+    it->itemQty = qty;
+
 }
 
-void sale::changePrice(int pos, double price)
+void sale::changePrice(double price, int pos)
 {
-    auto it = itemPriceList.begin();
+    auto it = itemList.begin();
     std::advance(it, pos);
-    *it = price;
+    it->itemPrice = price;
 }
 
-int sale::getTranxLength(){return itemSkuList.size();}
+int sale::getTranxLength(){return itemList.size();}
+int sale::getSku(){return this->itemSku;}
+int sale::getQty(){return this->itemQty;}
+double sale::getPrice(){return this->itemPrice;}

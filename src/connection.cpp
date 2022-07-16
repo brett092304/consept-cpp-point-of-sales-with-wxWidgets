@@ -1,4 +1,5 @@
 #include "connection.h"
+#include "program.h"
 #include <mysql_connection.h>
 #include <mysql_driver.h>
 #include <cppconn/driver.h>
@@ -17,9 +18,9 @@ bool CreateConnection::connectionAvaible = false;
 
 std::vector<std::string> CreateConnection::connection(std::string statement)
 {
+    std::vector<std::string> data;
     if (CreateConnection::connectionAvaible)
     {
-        std::vector<std::string> data;
         try
         {
             sql::Driver *driver;
@@ -58,8 +59,12 @@ std::vector<std::string> CreateConnection::connection(std::string statement)
             std::cout << "SQL State: " << e.getSQLState() << std::endl;
 
         }
-        return data;
-    } 
+    }
+    else
+    {
+        MainFrame::Error("Database Not Available");
+    }
+    return data;
 }
 
 std::vector<std::vector<std::string>> CreateConnection::lkUpConn(std::string statement)
@@ -212,7 +217,4 @@ void CreateConnection::setConnectionStatus(std::vector<std::string> fileAns)
     {
 	    CreateConnection::connectionAvaible = false;
     }
-
-
-
 }

@@ -1,11 +1,9 @@
 wx = `wx-config --cxxflags --libs`
 sql = -L/usr/lib -lmysqlcppconn
 conn = -I/usr/include/cppconn
-#cxx11 = -DCMAKE_CXX_FLAGS=-D__GLIBCXX_USE_CXX11_ABI=0
-#disable-abi = --disable-libstdcxx-dual-abi
 
-output: main.o program.o login.o ButtonSwitch.o connection.o lkupitemDialog.o sale.o SetUp.o
-	g++ -Wall $(conn) *.o $(wx) $(sql) -o output
+output: main.o program.o login.o ButtonSwitch.o connection.o lkupitemDialog.o sale.o SetUp.o ManualCreditCard.o
+	g++ -Wall $(conn) *.o $(wx) $(sql) -lstdc++fs -o output
 
 main.o: main.cpp main.h
 	g++ -Wall $(conn) -c main.cpp $(wx) $(sql)
@@ -30,6 +28,9 @@ sale.o: sale.cpp sale.h
 
 SetUp.o: SetUp.cpp SetUp.h
 	g++ -Wall $(conn) -c SetUp.cpp $(wx) $(sql)
+
+ManualCreditCard.o: ManualCreditCard.h ManualCreditCard.cpp
+	g++ -Wall $(conn) -c ManualCreditCard.cpp $(wx) $(sql)
 
 clean:
 	rm *.o output

@@ -215,6 +215,10 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
             getCash();
             break;
 
+        case 9004: //manual Card
+            getManualCard();
+            break;
+
         default:
             break;
     }

@@ -15,7 +15,7 @@ bool MyApp::OnInit()
 void StartUp::start()
 {
     std::ifstream ifile;
-    ifile.open("MysqlConnection.txt");
+    ifile.open(MyApp::getPath() + "MysqlConnection.txt");
     if (ifile)
     {
         std::vector<std::string> fileAns;
@@ -42,4 +42,11 @@ void StartUp::start()
         SetUp *setUpFrame = new SetUp(wxT("Set Up"));
         setUpFrame->Show(true);
     }
+}
+
+std::string MyApp::getPath()
+{
+    fs::path path = fs::canonical("/proc/self/exe");
+    std::string pathStr = path.string();
+    return pathStr.erase(pathStr.length() -6);
 }

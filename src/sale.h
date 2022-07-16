@@ -1,28 +1,33 @@
 #include "PCH.h"
 
-struct sale
+class sale
 {
     public:
-        std::string formatTotalPrice(int n);
-        double getCashAmount(std::string amount);
-        double formateToDoubleCash(std::string amount);
-        void getTotal(std::string totalAmount);
-        void addItem(int item, int quantity, double itemPrice);
-        void removeItem(int position);
-        void removeTranx();
-        int scanRemoveItem(std::string sku);
-        void getItem(int pos, int *sku, int *qty, double *price);
-        void changeQty(int pos, int qty);
-        void changePrice(int pos, double price);
-        int getTranxLength();
-        static std::string formatStringd(double num);
-    private:
-        double cashAmount;
-        static std::list<int> itemSkuList;
-        static std::list<double> itemPriceList;
-        static std::list<int> itemQtyList;
+        sale(int sku, int qty, double price);
 
-        static void clearSkuList();
-        static void clearPriceList();
-        static void clearQtyList();
+        static std::string formatTotalPrice(int n);
+        static double getCashAmount(std::string amount);
+        static double formateToDoubleCash(std::string amount);
+        static void printTotal(std::string totalAmount);
+        static void addItem(int item, int quantity, double itemPrice);
+        static void removeItem(int position);
+        static void removeTranx();
+        static int scanRemoveItem(std::string sku);
+        static sale getItem(int pos);
+        static int getTranxLength();
+        static std::string formatStringd(double num);
+
+        void changeQty(int qty, int pos);
+        void changePrice(double price, int pos);
+        int getSku();
+        int getQty();
+        double getPrice();
+
+    private:
+        static std::list<sale> itemList;
+
+        int itemSku, itemQty;
+        double itemPrice;
+        double cashAmount;
+
 };
