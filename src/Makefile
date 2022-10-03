@@ -3,7 +3,7 @@ sql = -L/usr/lib -lmysqlcppconn
 conn = -I/usr/include/cppconn
 
 output: main.o program.o login.o ButtonSwitch.o connection.o lkupitemDialog.o sale.o SetUp.o ManualCreditCard.o
-	g++ -Wall $(conn) *.o $(wx) $(sql) -lstdc++fs -o output
+	g++ -Wall $(conn) *.o $(wx) $(sql) -lstdc++fs -o output.exe
 
 main.o: main.cpp main.h
 	g++ -Wall $(conn) -c main.cpp $(wx) $(sql)
@@ -33,4 +33,4 @@ ManualCreditCard.o: ManualCreditCard.h ManualCreditCard.cpp
 	g++ -Wall $(conn) -c ManualCreditCard.cpp $(wx) $(sql)
 
 clean:
-	rm *.o output
+	rm *.o *.exe output

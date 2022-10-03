@@ -4,7 +4,7 @@
 #include "connection.h"
 #include "sale.h"
 
-void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
+void MainFrame::EnterButton(wxCommandEvent &event)
 {
     bool OpenMenu = false;
     int key = event.GetId();
@@ -143,6 +143,11 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
             mainMenuVSizer->Show(false);
             functionVSizer->Show(false);
             managerMenuVSizer->Show(true);
+            if (isDebug)
+                managerDuplicateBtn->Show(true);
+            else
+                managerDuplicateBtn->Show(false);
+            managerMenuVSizer->Layout();
             elementsVSizer->Layout();
             break;
 
@@ -151,6 +156,10 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
             OnLogout(true);
             break;
         
+        case 8003: //Return
+            returnItem();
+            break;
+
         case 8004: //Void Transaction
             deleteTranx(false);
             totalTranx();
@@ -160,7 +169,8 @@ void MainFrame::EnterNumPadNumber(wxCommandEvent &event)
             duplicateTableLine();
             break;
 
-        case 8003: //return button - temp
+        case 8006: //suspend tranx Button
+            suspendTranx();
             break;
 
         //Function Menu with 7000 ids

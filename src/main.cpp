@@ -48,5 +48,19 @@ std::string MyApp::getPath()
 {
     fs::path path = fs::canonical("/proc/self/exe");
     std::string pathStr = path.string();
-    return pathStr.erase(pathStr.length() -6);
+    return trimPath(pathStr);
+}
+
+std::string MyApp::trimPath(std::string fullpath)
+{
+    std::string path = fullpath;
+    for (int i = path.length() -1; i > 0; i--)
+    {
+        if (path.at(i) == '/')
+        {
+            path = path.substr(0, i + 1);
+            break;
+        }
+    }
+    return path;
 }

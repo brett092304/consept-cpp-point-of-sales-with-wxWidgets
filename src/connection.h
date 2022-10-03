@@ -1,4 +1,5 @@
 #include "PCH.h"
+#include "sale.h"
 
 class CreateConnection
 {
@@ -8,6 +9,8 @@ class CreateConnection
         static bool loginConn(std::string user, std::string userPass, std::string *name, bool *manager);
         static void setConnectionStatus(std::vector<std::string> fileAns);
         static bool establishConnection(std::string ip, std::string user, std::string pass, std::string userIp, std::string userUser, std::string userPass);
+        static void suspendTrx(sale item, std::string itemDesc, int randNum);
+
     private:
         static bool connectionAvaible;
         static std::string address;

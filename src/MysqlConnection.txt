@@ -1,0 +1,6 @@
+192.168.2.6:3306/compstore
+ProductAccess
+ProductAccess!
+192.168.2.6:3306/compstore
+UserAccess
+UserAccess!

@@ -6,6 +6,7 @@ class MyApp : public wxApp
     public:
         virtual bool OnInit();
         static std::string getPath();
+        static std::string trimPath(std::string fullpath);
 };
 
 class StartUp

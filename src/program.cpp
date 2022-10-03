@@ -205,8 +205,8 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     wxButton *storeCouponMenuBtn = new wxButton(mainPanel, 6003, wxT("Store Coupon"));
     wxBitmap uparrow;
     wxBitmap downarrow;
-    uparrow.LoadFile(MyApp::getPath() + "uparrow.bmp", wxBITMAP_TYPE_BMP);
-    downarrow.LoadFile(MyApp::getPath() + "downarrow.bmp", wxBITMAP_TYPE_BMP);
+    uparrow.LoadFile(MyApp::getPath() + "icons/uparrow.bmp", wxBITMAP_TYPE_BMP);
+    downarrow.LoadFile(MyApp::getPath() + "icons/downarrow.bmp", wxBITMAP_TYPE_BMP);
 
     wxBitmapButton *upListBtn = new wxBitmapButton(mainPanel, 6004, uparrow);
     wxBitmapButton *downListBtn = new wxBitmapButton(mainPanel, 6005, downarrow);
@@ -237,7 +237,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     wxButton *managerRefundBtn = new wxButton(mainPanel, 8002, wxT("Refund"));
     wxButton *managerReturnBtn = new wxButton(mainPanel, 8003, wxT("Return"));
     wxButton *managerDeleteTranx = new wxButton(mainPanel, 8004, wxT("Void Transaction"));
-    wxButton *managerDuplicateBtn = new wxButton(mainPanel, 8005, wxT("Copy Line"));
+    managerDuplicateBtn = new wxButton(mainPanel, 8005, wxT("Copy Line"));
     wxButton *managerSuspendBtn = new wxButton(mainPanel, 8006, wxT("Suspend"));
 
     managerMenuH1Sizer->Add(managerLogInBtn, menuPanelSizerFlags);
@@ -267,7 +267,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     wxButton *ManualCardPaymentBtn = new wxButton(mainPanel, 9004, wxT("Manual Card"));
     wxButton *CheckPaymentBtn = new wxButton(mainPanel, 9003, wxT("Check"));
     CheckPaymentBtn->Disable();
-    wxButton *ManualCheckPaymentBtn = new wxButton(mainPanel, 9004, wxT("Manual Check"));
+    wxButton *ManualCheckPaymentBtn = new wxButton(mainPanel, 9005, wxT("Manual Check"));
 
     paymentHSizer->Add(paymentV1Sizer, wxSizerFlags(2).Expand().Border(wxALL, 4));
     paymentHSizer->Add(paymentV2Sizer, wxSizerFlags(1).Expand().Border(wxALL, 4));
@@ -358,7 +358,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(NULL, 9099, title, wxPoint
     mainVSizer->Add(elementsHSizer, wxSizerFlags(1).Expand().Top().Border(wxALL, 5));
     mainPanel->SetSizer(mainVSizer);
 
-    mainPanel->Bind(wxEVT_BUTTON, &MainFrame::EnterNumPadNumber, this);
+    mainPanel->Bind(wxEVT_BUTTON, &MainFrame::EnterButton, this);
     Bind(wxEVT_SIZE, &MainFrame::GridSize, this);
     mainPanel->Bind(wxEVT_CHAR_HOOK, &MainFrame::keyPress, this);
     wxWindow::Layout();
@@ -392,6 +392,7 @@ void MainFrame::OnLogout(bool loginManager)
     loggedIn = false;
     isTempManager = false;
     isManagerText->Show(false);
+    isDebugText->Show(false);
     if (!loginManager)
     {
         if (tablePos >= 0)
@@ -475,11 +476,17 @@ void MainFrame::reciveCash()
 {
     if (UPCorPLUBox->GetLineText(0) != "")
     {
-        double cashRecived = wxAtof(UPCorPLUBox->GetLineText(0).mb_str());
-        UPCorPLUText->SetLabel(wxT("Sku or Upc: "));
-        UPCorPLUBox->Clear();
-        gettingCash = false;
-        determineTotalAfterPayment(cashRecived);
+        try
+        {
+            double cashRecived = wxAtof(UPCorPLUBox->GetLineText(0).mb_str());
+            UPCorPLUText->SetLabel(wxT("Sku or Upc: "));
+            UPCorPLUBox->Clear();
+            gettingCash = false;
+            determineTotalAfterPayment(cashRecived);
+        } catch (const std::exception& e)
+        {
+            Error("Cash Error");
+        }
     }
     else
     {
@@ -490,7 +497,11 @@ void MainFrame::reciveCash()
 void MainFrame::determineTotalAfterPayment(double payment)
 {
     totalDue = std::stod(sale::formatStringd(totalDue));
-    payment = std::stod(sale::formatStringd(payment)); //to trunkate the doubles to only #.##
+    payment = std::stod(sale::formatStringd(payment)); //trunkate doubles to only #.##
+    if (totalDue < 0)
+    {
+        payment *= -1;
+    }
     if (payment == totalDue)
     {
         deleteTranx(true);
@@ -513,6 +524,10 @@ void MainFrame::determineTotalAfterPayment(double payment)
         double balence = totalDue - payment;
         totalDue = balence;
         finalTotalDue->SetLabelText(sale::formatStringd(balence));
+    }
+    else
+    {
+        Error("Payment Error");
     }
 }
 
@@ -543,6 +558,23 @@ void MainFrame::duplicateTableLine()
             }
             std::string desc = std::string(dataTable->GetCellValue(tablePos, 0).mb_str());
             updateTable(desc, std::to_string(item.getQty()), item.getPrice(), std::to_string(item.getSku()));
+        }
+    }
+}
+
+void MainFrame::returnItem()
+{
+    if (isManager || isTempManager)
+    {
+        if (tablePos >= 0)
+        {
+            int quantity = wxAtoi(dataTable->GetCellValue(tablePos, 1)) * -1;
+            sale item = sale::getItem(tablePos);
+            item.changeQty(quantity, tablePos);
+            dataTable->SetCellValue(tablePos, 1, std::to_string(quantity));
+            double actualPrice = item.getPrice() * quantity;
+            dataTable->SetCellValue(tablePos, 2, sale::formatStringd(actualPrice));
+            dataTable->SetCellValue(tablePos, 0, dataTable->GetCellValue(tablePos, 0).ToStdString() + " **Return**");
         }
     }
 }
@@ -706,6 +738,35 @@ void MainFrame::updateTable(std::string desc, std::string qty, double price, std
             std::cout << tableRow[i] << " ";
         }
         std::cout << "\n";
+    }
+}
+
+void MainFrame::suspendTranx()
+{
+    if (isManager || isTempManager)
+    {
+        if (tablePos >= 0)
+        {
+            time_t now = time(0);
+            tm *ltm = localtime(&now);
+            int month = 1 + ltm->tm_mon;
+            int year = 1900 + ltm->tm_year;
+            int day = ltm->tm_mday;
+            std::string strTime = std::to_string(5 + ltm->tm_hour) + std::to_string(30 + ltm->tm_min) + std::to_string(ltm->tm_sec);
+            int time = std::stoi(strTime);
+            srand(month + year + day + time);
+            int randNum = rand() % 999999999 + 100000000;
+            
+            for (int i = 0; i < sale::getTranxLength(); i++)
+            {
+                CreateConnection::suspendTrx(sale::getItem(i), (dataTable->GetCellValue(i, 0)).ToStdString(), randNum);
+                if (isDebug)
+                {
+                    std::cout << sale::getItem(i).getSku() << " " << (dataTable->GetCellValue(i, 0)).ToStdString() << std::endl;
+                }
+            }
+        deleteTranx(false);
+        }
     }
 }
 

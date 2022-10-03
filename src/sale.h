@@ -1,3 +1,4 @@
+#pragma once
 #include "PCH.h"
 
 class sale
@@ -16,6 +17,7 @@ class sale
         static sale getItem(int pos);
         static int getTranxLength();
         static std::string formatStringd(double num);
+        
 
         void changeQty(int qty, int pos);
         void changePrice(double price, int pos);

@@ -1,0 +1,191 @@
+Using built-in specs.
+COLLECT_GCC=g++
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.3.0-17ubuntu1~20.04' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-HskZEa/gcc-9-9.3.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04) 
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT -D _FILE_OFFSET_BITS=64 -D WXUSINGDLL -D __WXGTK__ /home/brett/C++/src/main.cpp -quiet -dumpbase main.cpp -mtune=generic -march=x86-64 -auxbase main -Wall -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOBOnQj.s
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/brett/C++/src/headers
+ /usr/local/lib/wx/include/gtk3-unicode-3.0
+ /usr/local/include/wx-3.0
+ /usr/include/c++/9
+ /usr/include/x86_64-linux-gnu/c++/9
+ /usr/include/c++/9/backward
+ /usr/lib/gcc/x86_64-linux-gnu/9/include
+ /usr/local/include
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 466f818abe2f30ba03783f22bd12d815
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 --64 -o /tmp/ccNTg9wk.o /tmp/ccOBOnQj.s
+GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT -D _FILE_OFFSET_BITS=64 -D WXUSINGDLL -D __WXGTK__ /home/brett/C++/src/program.cpp -quiet -dumpbase program.cpp -mtune=generic -march=x86-64 -auxbase program -Wall -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOBOnQj.s
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/brett/C++/src/headers
+ /usr/local/lib/wx/include/gtk3-unicode-3.0
+ /usr/local/include/wx-3.0
+ /usr/include/c++/9
+ /usr/include/x86_64-linux-gnu/c++/9
+ /usr/include/c++/9/backward
+ /usr/lib/gcc/x86_64-linux-gnu/9/include
+ /usr/local/include
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 466f818abe2f30ba03783f22bd12d815
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 --64 -o /tmp/ccoxu4ol.o /tmp/ccOBOnQj.s
+GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT -D _FILE_OFFSET_BITS=64 -D WXUSINGDLL -D __WXGTK__ /home/brett/C++/src/sizer.cpp -quiet -dumpbase sizer.cpp -mtune=generic -march=x86-64 -auxbase sizer -Wall -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOBOnQj.s
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/brett/C++/src/headers
+ /usr/local/lib/wx/include/gtk3-unicode-3.0
+ /usr/local/include/wx-3.0
+ /usr/include/c++/9
+ /usr/include/x86_64-linux-gnu/c++/9
+ /usr/include/c++/9/backward
+ /usr/lib/gcc/x86_64-linux-gnu/9/include
+ /usr/local/include
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 466f818abe2f30ba03783f22bd12d815
+/home/brett/C++/src/sizer.cpp: In member function ‘void Frame::OnLoginBtnPressed(wxCommandEvent&)’:
+/home/brett/C++/src/sizer.cpp:49:5: warning: statement has no effect [-Wunused-value]
+   49 |     wxThreadWait(50000);
+      |     ^~~~~~~~~~~~~~~~~~~
+/home/brett/C++/src/sizer.cpp:50:27: error: ‘mainFrame’ was not declared in this scope; did you mean ‘MainFrame’?
+   50 |     MainFrame::MainFrame *mainFrame = new MainFrame(wxT("Sales"));
+      |                           ^~~~~~~~~
+      |                           MainFrame
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT -D _FILE_OFFSET_BITS=64 -D WXUSINGDLL -D __WXGTK__ /home/brett/C++/src/headers/main.h -quiet -dumpbase main.h -mtune=generic -march=x86-64 -auxbase main -Wall -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOBOnQj.s --output-pch= /home/brett/C++/out/out.exe
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/brett/C++/src/headers
+ /usr/local/lib/wx/include/gtk3-unicode-3.0
+ /usr/local/include/wx-3.0
+ /usr/include/c++/9
+ /usr/include/x86_64-linux-gnu/c++/9
+ /usr/include/c++/9/backward
+ /usr/lib/gcc/x86_64-linux-gnu/9/include
+ /usr/local/include
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 466f818abe2f30ba03783f22bd12d815
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT -D _FILE_OFFSET_BITS=64 -D WXUSINGDLL -D __WXGTK__ /home/brett/C++/src/headers/program.h -quiet -dumpbase program.h -mtune=generic -march=x86-64 -auxbase program -Wall -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOBOnQj.s --output-pch= /home/brett/C++/out/out.exe
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/brett/C++/src/headers
+ /usr/local/lib/wx/include/gtk3-unicode-3.0
+ /usr/local/include/wx-3.0
+ /usr/include/c++/9
+ /usr/include/x86_64-linux-gnu/c++/9
+ /usr/include/c++/9/backward
+ /usr/lib/gcc/x86_64-linux-gnu/9/include
+ /usr/local/include
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 466f818abe2f30ba03783f22bd12d815
+COLLECT_GCC_OPTIONS='-v' '-Wall' '-I' '/home/brett/C++/src/headers' '-I' '/usr/local/lib/wx/include/gtk3-unicode-3.0' '-I' '/usr/local/include/wx-3.0' '-D' '_FILE_OFFSET_BITS=64' '-D' 'WXUSINGDLL' '-D' '__WXGTK__' '-pthread' '-L/usr/local/lib' '-pthread' '-o' '/home/brett/C++/out/out.exe' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -I /home/brett/C++/src/headers -I /usr/local/lib/wx/include/gtk3-unicode-3.0 -I /usr/local/include/wx-3.0 -imultiarch x86_64-linux-gnu -D_GNU_SOURCE -D_REENTRANT -D _FILE_OFFSET_BITS=64 -D WXUSINGDLL -D __WXGTK__ /home/brett/C++/src/headers/sizer.h -quiet -dumpbase sizer.h -mtune=generic -march=x86-64 -auxbase sizer -Wall -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOBOnQj.s --output-pch= /home/brett/C++/out/out.exe
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/brett/C++/src/headers
+ /usr/local/lib/wx/include/gtk3-unicode-3.0
+ /usr/local/include/wx-3.0
+ /usr/include/c++/9
+ /usr/include/x86_64-linux-gnu/c++/9
+ /usr/include/c++/9/backward
+ /usr/lib/gcc/x86_64-linux-gnu/9/include
+ /usr/local/include
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+	compiled by GNU C version 9.3.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 466f818abe2f30ba03783f22bd12d815

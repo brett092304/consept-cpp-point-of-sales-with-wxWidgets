@@ -7,7 +7,7 @@ class MainFrame : public wxFrame
         void OnLogout(bool loginManager);
         void keyPress(wxKeyEvent &event);
         void GridSize(wxSizeEvent &event);
-        void EnterNumPadNumber(wxCommandEvent &event);
+        void EnterButton(wxCommandEvent &event);
         void MenuLgout(wxCommandEvent &event);
         void LkUpItem();
         void getCash();
@@ -38,7 +38,9 @@ class MainFrame : public wxFrame
         double taxTotalTranx(double subtotal);
         void determineTotalAfterPayment(double payment);
         void taxExempt();
-        
+        void returnItem();
+        void suspendTranx();
+                
     private:
         wxPanel *mainPanel;
         wxBoxSizer *mainVSizer;
@@ -56,6 +58,8 @@ class MainFrame : public wxFrame
         wxStaticText *isManagerText;
         wxStaticText *isDebugText;
         wxStaticText *transactionPersonText;
+        wxButton *managerDuplicateBtn;
+
         wxBoxSizer *functionVSizer;
         wxBoxSizer *paymentVSizer;
         wxBoxSizer *mainMenuVSizer;

@@ -143,15 +143,15 @@ bool CreateConnection::loginConn(std::string user, std::string userPass, std::st
             sql::PreparedStatement *pstmt;
             driver = get_driver_instance();
             con = driver->connect(CreateConnection::userAddress, CreateConnection::userUsername, CreateConnection::userPassword);
-            pstmt = con->prepareStatement("select user_pwd, manager, user_names from users where user_Number=" + user + ";");
+            pstmt = con->prepareStatement("select pass, manager, name from users where user_num=" + user + ";");
             res = pstmt->executeQuery();
             while (res->next())
             {
-                std::string pass = res->getString("user_pwd");
+                std::string pass = res->getString("pass");
                 password = pass;
                 bool isManager = res->getBoolean("manager");
                 Manager = isManager;
-                std::string checkerName = res->getString("user_names");
+                std::string checkerName = res->getString("name");
                 cashirName = checkerName;
             }
             delete res;
@@ -172,6 +172,33 @@ bool CreateConnection::loginConn(std::string user, std::string userPass, std::st
             return true;
         }
         return false;
+    }
+}
+
+void CreateConnection::suspendTrx(sale item, std::string itemDesc, int randNum)
+{
+    if (connectionAvaible)
+    {
+        try
+        {
+            sql::Driver *driver;
+            sql::Connection *con;
+            sql::PreparedStatement *pstmt;
+            driver = get_driver_instance();
+            con = driver->connect(address, username, password);
+            char quote = '"';
+            pstmt = con->prepareStatement("insert into suspended_trx(sku, quantity, description, price, unique_receipt) values (" + std::to_string(item.getSku()) + 
+            "," + std::to_string(item.getQty()) + "," + quote + itemDesc + quote + ","+ std::to_string(item.getPrice()) + "," + std::to_string(randNum) + ");");
+            pstmt->executeQuery();
+
+            delete pstmt;
+            delete con;
+        }
+        catch(sql::SQLException &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        
     }
 }
 
