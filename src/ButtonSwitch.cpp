@@ -188,6 +188,10 @@ void MainFrame::EnterButton(wxCommandEvent &event)
             UPCorPLUText->SetLabelText(wxT("Tax Exempt: "));
             break;
 
+        case 7002: //resume Transaction
+            resumeTranx();
+            break;
+
         //Main Menu with 6000 ids
         case 6001: //Scanvoid Button
             UPCorPLUText->SetLabelText("Sku or Upc to Void: ");

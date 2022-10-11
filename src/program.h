@@ -40,6 +40,7 @@ class MainFrame : public wxFrame
         void taxExempt();
         void returnItem();
         void suspendTranx();
+        void resumeTranx();
                 
     private:
         wxPanel *mainPanel;

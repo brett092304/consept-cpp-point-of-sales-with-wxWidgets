@@ -3,6 +3,7 @@
 #include "sale.h"
 #include "login.h"
 #include "ManualCreditCard.h"
+#include "ResumeTranx.h"
 #include "connection.h"
 #include "main.h"
 
@@ -765,9 +766,16 @@ void MainFrame::suspendTranx()
                     std::cout << sale::getItem(i).getSku() << " " << (dataTable->GetCellValue(i, 0)).ToStdString() << std::endl;
                 }
             }
-        deleteTranx(false);
+            deleteTranx(false);
         }
     }
+}
+
+void MainFrame::resumeTranx()
+{
+    ResumeTranx *resume = new ResumeTranx(wxT("Resume Tranx"));
+    resume->Show(true);
+    delete resume;
 }
 
 void MainFrame::deleteTranx(bool recievedPayment)

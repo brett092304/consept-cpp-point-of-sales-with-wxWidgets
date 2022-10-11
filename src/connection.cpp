@@ -202,6 +202,61 @@ void CreateConnection::suspendTrx(sale item, std::string itemDesc, int randNum)
     }
 }
 
+std::vector<std::vector<std::string>> CreateConnection::resumeTranxView(std::string statement)
+{
+    if (connectionAvaible)
+    {
+        std::vector<std::vector<std::string>> data;
+        std::vector<std::string> skuvec;
+        std::vector<std::string> descvec;
+        std::Vector<std::string> qtyvec;
+        std::vector<std::string> pricevec;
+        std::vector<std::string> receiptvec;
+
+        try
+        {
+            sql::Driver *driver;
+            sql::Connection *con;
+            sql::ResultSet *res;
+            sql::PreparedStatement *pstmt;
+
+            driver = get_driver_instance();
+            con = driver->connect(address, username, password);
+            pstmt = con->prepareSatement("select * from suspended_trx");
+            res = pstmt->ExecuteQuery();
+            while(res->next())
+            {
+                std::string sku = res->getString("sku");
+                skuvec.push_back(sku);
+                std::string desc = res->getString("description");
+                descvec.push_back(desc);
+                std::string qty = res->getString("quantity");
+                qtyvec.push_back(qty);
+                std::string price = res->getString("price");
+                pricevec.push_back(price);
+                std::string receipt = res->getString("unique_receipt");
+                receiptvec.push_back(receipt);
+            }
+            delete pstmt;
+            delete res;
+            delete con;
+        }
+        catch (sql::SQLException &e)
+        {
+            std::cout << "#ERR: " << e.what();
+            std::cout << "Error Code: " << e.getErrorCode();
+            std::cout << "SQL State: " << e.getSQLState() << std::endl;
+
+        }
+        data.push_back(skuvec);
+        data.push_back(descvec);
+        data.push_back(qtyvec);
+        data.push_back(pricevec);
+        data.push_back(receiptvec);
+        return data;
+    }
+}
+
 
 bool CreateConnection::establishConnection(std::string ip, std::string user, std::string pass, std::string userIp, std::string userUser, std::string userPass)
 {

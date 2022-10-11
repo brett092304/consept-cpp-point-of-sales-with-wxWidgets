@@ -2,7 +2,7 @@ wx = `wx-config --cxxflags --libs`
 sql = -L/usr/lib -lmysqlcppconn
 conn = -I/usr/include/cppconn
 
-output: main.o program.o login.o ButtonSwitch.o connection.o lkupitemDialog.o sale.o SetUp.o ManualCreditCard.o
+output: main.o program.o login.o ButtonSwitch.o connection.o lkupitemDialog.o sale.o SetUp.o ManualCreditCard.o ResumeTranx.o
 	g++ -Wall $(conn) *.o $(wx) $(sql) -lstdc++fs -o output.exe
 
 main.o: main.cpp main.h
@@ -31,6 +31,9 @@ SetUp.o: SetUp.cpp SetUp.h
 
 ManualCreditCard.o: ManualCreditCard.h ManualCreditCard.cpp
 	g++ -Wall $(conn) -c ManualCreditCard.cpp $(wx) $(sql)
+
+ResumeTranx.o: ResumeTranx.h ResumeTranx.cpp
+	g++ -Wall $(conn) -c ResumeTranx.cpp $(wx) $(sql)
 
 clean:
 	rm *.o *.exe output
