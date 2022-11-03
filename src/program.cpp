@@ -773,9 +773,37 @@ void MainFrame::suspendTranx()
 
 void MainFrame::resumeTranx()
 {
-    ResumeTranx *resume = new ResumeTranx(wxT("Resume Tranx"));
-    resume->Show(true);
-    delete resume;
+    int *receiptNum = new int;
+    ResumeTranx *resume = new ResumeTranx(wxT("Resume Tranx"), receiptNum);
+    resume->ShowModal();
+    std::vector<std::vector<std::string>> data = CreateConnection::resumeTranaction(std::to_string(*receiptNum));
+
+    if (isDebug)
+    {
+        for (auto iter = data.begin(); iter != data.end(); iter++)
+        {
+            for (int j = 0; j < iter->size(); j++)
+            {
+                std::cout << iter->at(j) << std::endl;
+            }
+            std::cout << "\n";
+        }
+    }
+
+    std::vector<std::string> temp;
+    for (int i = 0; i < data.at(0).size(); i++)
+    {
+        for (int j = 0; j < data.size(); j++)
+        {
+            temp.push_back(data.at(j).at(i));
+        }
+        sale::addItem(std::stoi(temp[0]), std::stoi(temp[1]), std::stod(temp[3]));
+        updateTable(temp[2], temp[1], std::stod(temp[3]), temp[0]);
+        temp.clear();
+    }
+    totalTranx();
+    CreateConnection::updateSuspendedTranx(std::to_string(*receiptNum));
+    delete receiptNum;
 }
 
 void MainFrame::deleteTranx(bool recievedPayment)

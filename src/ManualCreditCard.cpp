@@ -299,9 +299,19 @@ void ManualCreditCard::keyPad(wxCommandEvent &event)
                     {
                         if (cardNumBox->GetLineText(0).length() == 10)
                         {
-                            if (wxAtoi(cardExpireYearBox->GetLineText(0)) >= getYear())
+                            if (wxAtoi(cardExpireYearBox->GetLineText(0)) > getYear())
                             {
-                                if (wxAtoi(cardExpireMonthBox->GetLineText(0)) >= getMonth() && wxAtoi(cardExpireMonthBox->GetLineText(0)) <= MON_PER_YEAR)
+                                if (wxAtoi(cardExpireMonthBox->GetLineText(0)) <= MON_PER_YEAR)
+                                {
+                                    *payAmount = std::stod(sale::formatStringd(wxAtof(cardAmountBox->GetLineText(0))));
+                                    cancel(event);
+                                }
+                                else
+                                    cardExpireMonthBox->SetFocus();
+                            }
+                            else if (wxAtoi(cardExpireYearBox->GetLineText(0)) == getYear())
+                            {
+                                if (wxAtoi(cardExpireMonthBox->GetLineText(0)) >= getMonth())
                                 {
                                     *payAmount = std::stod(sale::formatStringd(wxAtof(cardAmountBox->GetLineText(0))));
                                     cancel(event);

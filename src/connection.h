@@ -10,7 +10,9 @@ class CreateConnection
         static void setConnectionStatus(std::vector<std::string> fileAns);
         static bool establishConnection(std::string ip, std::string user, std::string pass, std::string userIp, std::string userUser, std::string userPass);
         static void suspendTrx(sale item, std::string itemDesc, int randNum);
-        static std::vector<std::vector<std::string>> resumeTranxView(std::string statement)
+        static std::vector<std::vector<std::string>> resumeTranxView();
+        static std::vector<std::vector<std::string>> resumeTranaction(std::string statement);
+        static void updateSuspendedTranx(std::string statement);
 
     private:
         static bool connectionAvaible;

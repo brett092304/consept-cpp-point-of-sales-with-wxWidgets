@@ -35,5 +35,8 @@ ManualCreditCard.o: ManualCreditCard.h ManualCreditCard.cpp
 ResumeTranx.o: ResumeTranx.h ResumeTranx.cpp
 	g++ -Wall $(conn) -c ResumeTranx.cpp $(wx) $(sql)
 
+debug: 
+	g++ -Wall $(conn) -g main.cpp program.cpp login.cpp ButtonSwitch.cpp connection.cpp lkupitemDialog.cpp sale.cpp SetUp.cpp ManualCreditCard.cpp ResumeTranx.cpp $(wx) $(sql) -lstdc++fs -o output.debug
+
 clean:
 	rm *.o *.exe output
