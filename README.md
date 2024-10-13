@@ -1,6 +1,6 @@
 # This project is currently NOT under active development
 
-# Consept Point-of-Sales Program
+# Concept Point-of-Sales Program
 
 This program is consept point-of-sales application that is built with the wxWidgets Library.
 wxWidgets Library **NOT** included. You can find the download for wxWidgets at https://www.wxwidgets.org/downloads/ and compiling it at https://wiki.wxwidgets.org/Compiling_and_getting_started
